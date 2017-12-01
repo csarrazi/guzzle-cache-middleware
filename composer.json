@@ -1,0 +1,38 @@
+{
+    "name": "csa/guzzle-cache-middleware",
+    "description": "A Cache middleware for GuzzleHttp >= 6.0",
+    "license": "Apache-2.0",
+    "type": "library",
+    "authors": [
+        { "name": "Charles Sarrazin", "email": "charles@sarraz.in" }
+    ],
+    "require": {
+        "php": ">=5.6.0",
+        "guzzlehttp/guzzle": "^6.1",
+        "symfony/filesystem": "^2.7|^3.0|^4.0"
+    },
+    "suggest": {
+        "doctrine/cache": "Allows caching of responses",
+        "psr/cache": "Allows caching of responses",
+        "namshi/cuzzle": "Output command to repeat request in command line",
+        "tolerance/tolerance": "Allows retrying failed requests"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^4.8",
+        "doctrine/cache": "^1.1",
+        "psr/cache": "^1.0",
+        "symfony/phpunit-bridge": "^2.7|^3.0|^4.0"
+    },
+    "autoload": {
+        "psr-4": { "Csa\\GuzzleHttp\\Middleware\\Cache\\": "src" }
+    },
+    "autoload-dev": {
+        "psr-4": { "Csa\\Tests\\GuzzleHttp\\Middleware\\Cache\\": "tests" }
+    },
+    "minimum-stability": "dev",
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0-dev"
+        }
+    }
+}

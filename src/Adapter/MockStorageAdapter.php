@@ -33,16 +33,21 @@ class MockStorageAdapter implements StorageAdapterInterface
 
     /**
      * @param string $storagePath
-     * @param array  $requestHeadersBlacklist
-     * @param array  $responseHeadersBlacklist
+     * @param array $requestHeadersBlacklist
+     * @param array $responseHeadersBlacklist
+     * @param NamingStrategyInterface|null $namingStrategy
      */
-    public function __construct($storagePath, array $requestHeadersBlacklist = [], array $responseHeadersBlacklist = [])
+    public function __construct($storagePath, array $requestHeadersBlacklist = [], array $responseHeadersBlacklist = [], NamingStrategyInterface $namingStrategy = null)
     {
         $this->storagePath = $storagePath;
 
-        $this->namingStrategies[] = new SubfolderNamingStrategy($requestHeadersBlacklist);
-        $this->namingStrategies[] = new LegacyNamingStrategy(true, $requestHeadersBlacklist);
-        $this->namingStrategies[] = new LegacyNamingStrategy(false, $requestHeadersBlacklist);
+        if ($namingStrategy) {
+            $this->namingStrategies[] = $namingStrategy;
+        } else {
+            $this->namingStrategies[] = new SubfolderNamingStrategy($requestHeadersBlacklist);
+            $this->namingStrategies[] = new LegacyNamingStrategy(true, $requestHeadersBlacklist);
+            $this->namingStrategies[] = new LegacyNamingStrategy(false, $requestHeadersBlacklist);
+        }
 
         if (!empty($responseHeadersBlacklist)) {
             $this->responseHeadersBlacklist = $responseHeadersBlacklist;
@@ -57,6 +62,8 @@ class MockStorageAdapter implements StorageAdapterInterface
         foreach ($this->namingStrategies as $strategy) {
             if (file_exists($filename = $this->getFilename($strategy->filename($request)))) {
                 return Psr7\parse_response(file_get_contents($filename));
+            } else {
+                var_dump($filename);
             }
         }
     }

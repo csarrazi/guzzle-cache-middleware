@@ -12,6 +12,7 @@
 namespace Csa\Tests\GuzzleHttp\Middleware\Cache\Adapter;
 
 use Csa\GuzzleHttp\Middleware\Cache\Adapter\MockStorageAdapter;
+use Csa\GuzzleHttp\Middleware\Cache\NamingStrategy\NamingStrategyInterface;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 use Psr\Http\Message\ResponseInterface;
@@ -94,6 +95,28 @@ class MockStorageAdapterTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(404, $response->getStatusCode());
 
         $this->assertFalse($response->hasHeader('X-Foo'));
+    }
+
+    public function testFetchWithInjectedNamingStrategy()
+    {
+        $namingStrategy = $this->getMock(NamingStrategyInterface::class);
+        $request = $this->getRequestMock();
+        $adapter = new $this->class($this->tmpDir, [], [], $namingStrategy);
+
+        $namingStrategy->expects($this->once())->method('filename')->with($request);
+
+        $adapter->fetch($request);
+    }
+
+    public function testSaveWithInjectedNamingStrategy()
+    {
+        $namingStrategy = $this->getMock(NamingStrategyInterface::class);
+        $request = $this->getRequestMock();
+        $adapter = new $this->class($this->tmpDir, [], [], $namingStrategy);
+
+        $namingStrategy->expects($this->once())->method('filename')->with($request);
+
+        $adapter->save($request, new Response());
     }
 
     private function getRequestMock()

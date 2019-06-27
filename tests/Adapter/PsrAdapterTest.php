@@ -12,6 +12,7 @@
 namespace Csa\Tests\GuzzleHttp\Middleware\Cache\Adapter;
 
 use Csa\GuzzleHttp\Middleware\Cache\Adapter\PsrAdapter;
+use Csa\GuzzleHttp\Middleware\Cache\NamingStrategy\NamingStrategyInterface;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 use Psr\Cache\CacheItemInterface;
@@ -97,11 +98,50 @@ class PsrAdapterTest extends \PHPUnit_Framework_TestCase
             ->with($item)
         ;
         $adapter = new PsrAdapter($cache, 10);
-        $adapter->save($this->getRequestMock(), new Response(200, [], 'Hello World'));
+        $adapter->save($this->getRequestMock(), $this->getResponseMock());
+    }
+
+    public function testFetchWithInjectedNamingStrategy()
+    {
+        $cache = $this->getCacheMock();
+        $namingStrategy = $this->getMock(NamingStrategyInterface::class);
+        $request = $this->getRequestMock();
+        $adapter = new PsrAdapter($cache, 0, $namingStrategy);
+
+        $namingStrategy->expects($this->once())->method('filename')->with($request);
+
+        $adapter->fetch($request);
+    }
+
+    public function testSaveWithInjectedNamingStrategy()
+    {
+        $cache = $this->getCacheMock();
+        $namingStrategy = $this->getMock(NamingStrategyInterface::class);
+        $request = $this->getRequestMock();
+        $response = $this->getResponseMock();
+        $adapter = new PsrAdapter($cache, 0, $namingStrategy);
+
+        $namingStrategy->expects($this->once())->method('filename')->with($request);
+
+        $adapter->save($request, $response);
     }
 
     private function getRequestMock()
     {
         return new Request('GET', 'http://google.com/', ['Accept' => 'text/html']);
+    }
+
+    private function getResponseMock()
+    {
+        return new Response(200, [], 'Hello World');
+    }
+
+    private function getCacheMock()
+    {
+        $item = $this->getMock(CacheItemInterface::class);
+        $cache = $this->getMock(CacheItemPoolInterface::class);
+        $cache->method('getItem')->willReturn($item);
+
+        return $cache;
     }
 }

@@ -12,6 +12,7 @@
 namespace Csa\GuzzleHttp\Middleware\Cache\Adapter;
 
 use Csa\GuzzleHttp\Middleware\Cache\NamingStrategy\HashNamingStrategy;
+use Csa\GuzzleHttp\Middleware\Cache\NamingStrategy\NamingStrategyInterface;
 use Doctrine\Common\Cache\Cache;
 use GuzzleHttp\Psr7\Response;
 use Psr\Http\Message\RequestInterface;
@@ -23,10 +24,15 @@ class DoctrineAdapter implements StorageAdapterInterface
     private $namingStrategy;
     private $ttl;
 
-    public function __construct(Cache $cache, $ttl = 0)
+    /**
+     * @param Cache $cache
+     * @param int $ttl
+     * @param NamingStrategyInterface|null $namingStrategy
+     */
+    public function __construct(Cache $cache, $ttl = 0, NamingStrategyInterface $namingStrategy = null)
     {
         $this->cache = $cache;
-        $this->namingStrategy = new HashNamingStrategy();
+        $this->namingStrategy = $namingStrategy ?: new HashNamingStrategy();
         $this->ttl = $ttl;
     }
 
@@ -52,7 +58,7 @@ class DoctrineAdapter implements StorageAdapterInterface
         $data = [
             'status' => $response->getStatusCode(),
             'headers' => $response->getHeaders(),
-            'body' => (string) $response->getBody(),
+            'body' => (string)$response->getBody(),
             'version' => $response->getProtocolVersion(),
             'reason' => $response->getReasonPhrase(),
         ];

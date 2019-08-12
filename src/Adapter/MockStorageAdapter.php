@@ -62,8 +62,6 @@ class MockStorageAdapter implements StorageAdapterInterface
         foreach ($this->namingStrategies as $strategy) {
             if (file_exists($filename = $this->getFilename($strategy->filename($request)))) {
                 return Psr7\parse_response(file_get_contents($filename));
-            } else {
-                var_dump($filename);
             }
         }
     }

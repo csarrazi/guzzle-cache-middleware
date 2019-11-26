@@ -9,7 +9,7 @@
     "require": {
         "php": ">=5.6.0",
         "guzzlehttp/guzzle": "^6.1",
-        "symfony/filesystem": "^2.7|^3.0|^4.0"
+        "symfony/filesystem": "^2.7|^3.0|^4.0|^5.0"
     },
     "suggest": {
         "doctrine/cache": "Allows caching of responses",
@@ -21,7 +21,7 @@
         "phpunit/phpunit": "^4.8",
         "doctrine/cache": "^1.1",
         "psr/cache": "^1.0",
-        "symfony/phpunit-bridge": "^2.7|^3.0|^4.0"
+        "symfony/phpunit-bridge": "^2.7|^3.0|^4.0|^5.0"
     },
     "autoload": {
         "psr-4": { "Csa\\GuzzleHttp\\Middleware\\Cache\\": "src" }
@@ -30,6 +30,7 @@
         "psr-4": { "Csa\\Tests\\GuzzleHttp\\Middleware\\Cache\\": "tests" }
     },
     "minimum-stability": "dev",
+    "prefer-stable": true,
     "extra": {
         "branch-alias": {
             "dev-master": "1.0-dev"
